@@ -1,7 +1,7 @@
 # University Campus Management System — Backend Development Capstone
 
-**Student:** Harshwardhan  
-**Roll Number:** `2501730330`  
+**Student:** Srishti  
+**Roll Number:** `2501730380`  
 **Semester:** 3  
 **Institution:** K.R. Mangalam University  
 **Tech Stack:** Node.js, Express.js, MongoDB, Mongoose, JWT, bcryptjs, Socket.IO, EventEmitter  
@@ -80,7 +80,7 @@ All seeded accounts use password: **`Password@123`**
 | **Admin** | Dr. Rajesh Kumar | `admin@krmangalam.edu.in` | `KRMU-ADM-001` |
 | **Faculty 1** | Prof. Ananya Sharma | `ananya.sharma@krmangalam.edu.in` | `KRMU-FAC-101` (Teaches CSEN2001 & CSEN2002 Sec A) |
 | **Faculty 2** | Dr. Vikram Mehta | `vikram.mehta@krmangalam.edu.in` | `KRMU-FAC-102` (Teaches CSEN2003 Sec B) |
-| **Student 1** | **Harshwardhan** | `harshwardhan@krmangalam.edu.in` | **Roll No: `2501730330`**, Sem 3 (>85% attendance) |
+| **Student 1** | **Srishti** | `srishti.soni@krmangalam.edu.in` | **Roll No: `2501730380`**, Sem 3 (>85% attendance) |
 | **Student 2** | Aarav Verma | `aarav.verma@krmangalam.edu.in` | Roll No: `2501730331`, Sem 3 (<75% attendance defaulter) |
 | **Student 3** | Priya Nair | `priya.nair@krmangalam.edu.in` | Roll No: `2501730332`, Sem 3 |
 
