@@ -39,8 +39,8 @@ app.use(requestAuditLogger);
 app.get('/', (_req, res) => {
   return ApiResponse.send(res, 200, 'K.R. Mangalam University Campus Management System API', {
     project: 'University Campus Management System',
-    student: 'Harshwardhan',
-    rollNumber: '2501730330',
+    student: 'Srishti',
+    rollNumber: '2501730380',
     semester: 3,
     institution: 'K.R. Mangalam University',
     healthEndpoint: '/api/health',
