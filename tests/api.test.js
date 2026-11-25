@@ -43,10 +43,10 @@ const apiRequest = async (path, { method = 'GET', token = null, body = null } = 
 describe('KRMU University Campus Management System — Integration & Real-Time Tests', () => {
   let adminToken;
   let faculty1Token;
-  let harshToken;
+  let srishtiToken;
   let aaravToken;
 
-  let harshUser;
+  let srishtiUser;
   let aaravUser;
   let faculty1User;
   let course2001;
@@ -72,7 +72,7 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
 
     // Fetch seeded entity references
     [harshUser, aaravUser, faculty1User, course2001] = await Promise.all([
-      User.findOne({ email: 'harshwardhan@krmangalam.edu.in' }),
+      User.findOne({ email: 'srishti.soni@krmangalam.edu.in' }),
       User.findOne({ email: 'aarav.verma@krmangalam.edu.in' }),
       User.findOne({ email: 'ananya.sharma@krmangalam.edu.in' }),
       Course.findOne({ code: 'CSEN2001' }),
@@ -92,10 +92,10 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       return res.data.data.accessToken;
     };
 
-    [adminToken, faculty1Token, harshToken, aaravToken] = await Promise.all([
+    [adminToken, faculty1Token, srishtiToken, aaravToken] = await Promise.all([
       loginActor('admin@krmangalam.edu.in'),
       loginActor('ananya.sharma@krmangalam.edu.in'),
-      loginActor('harshwardhan@krmangalam.edu.in'),
+      loginActor('srishti.soni@krmangalam.edu.in'),
       loginActor('aarav.verma@krmangalam.edu.in'),
     ]);
   });
@@ -213,13 +213,13 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       const noToken = await apiRequest('/api/users/me');
       assert.equal(noToken.status, 401);
 
-      const studentOnAdminRoute = await apiRequest('/api/users', { token: harshToken });
+      const studentOnAdminRoute = await apiRequest('/api/users', { token: srishtiToken });
       assert.equal(studentOnAdminRoute.status, 403);
 
-      const harshProfile = await apiRequest('/api/users/me', { token: harshToken });
-      assert.equal(harshProfile.status, 200);
-      assert.equal(harshProfile.data.data.rollNumber, '2501730330');
-      assert.equal(harshProfile.data.data.name, 'Harshwardhan');
+      const srishtiProfile = await apiRequest('/api/users/me', { token: srishtiToken });
+      assert.equal(srishtiProfile.status, 200);
+      assert.equal(srishtiProfile.data.data.rollNumber, '2501730380');
+      assert.equal(srishtiProfile.data.data.name, 'Srishti');
 
       const adminUsers = await apiRequest('/api/users?role=student&page=1&limit=5', {
         token: adminToken,
@@ -266,14 +266,14 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       assert.equal(deleted.status, 200);
     });
 
-    it('validates faculty role on Section creation and blocks duplicate Enrollments (409)', async () => {
+    it('validates faculty role on Section creation and blocks duplicate Enrollments (380)', async () => {
       const badSection = await apiRequest('/api/sections', {
         method: 'POST',
         token: adminToken,
         body: {
           name: 'Section Z',
           course: course2001._id,
-          faculty: harshUser._id, // Student, not faculty!
+          faculty: srishtiUser._id, // Student, not faculty!
           semester: 3,
         },
       });
@@ -301,9 +301,9 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       });
       assert.equal(enrollDup.status, 409);
 
-      const harshCourses = await apiRequest('/api/enrollments/my-courses', { token: harshToken });
-      assert.equal(harshCourses.status, 200);
-      assert.equal(harshCourses.data.data.length, 2);
+      const srishtiCourses = await apiRequest('/api/enrollments/my-courses', { token: srishtiToken });
+      assert.equal(srishtiCourses.status, 200);
+      assert.equal(srishtiCourses.data.data.length, 2);
     });
   });
 
@@ -311,11 +311,11 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
     it('prevents faculty from marking attendance for an unassigned section (403)', async () => {
       const res = await apiRequest('/api/attendance/mark', {
         method: 'POST',
-        token: faculty1Token, // Not assigned to CSEN2003 Section B
+        token: faculty1Token, // Not assigned to CSEN2003 Section F
         body: {
-          sectionId: section2003B._id,
+          sectionId: section2003F._id,
           date: '2026-11-20',
-          records: [{ studentId: harshUser._id, status: 'Present' }],
+          records: [{ studentId: srishtiUser._id, status: 'Present' }],
         },
       });
       assert.equal(res.status, 403);
@@ -330,7 +330,7 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
           date: '2026-11-20',
           sessionNumber: 1,
           records: [
-            { studentId: harshUser._id, status: 'Present' },
+            { studentId: srishtiUser._id, status: 'Present' },
             { studentId: aaravUser._id, status: 'Absent' },
           ],
         },
@@ -347,7 +347,7 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
           sectionId: section2001A._id,
           date: '2026-11-20',
           sessionNumber: 1,
-          records: [{ studentId: harshUser._id, status: 'Present' }],
+          records: [{ studentId: srishtiUser._id, status: 'Present' }],
         },
       });
       assert.equal(markDup.status, 409);
@@ -369,20 +369,20 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
     });
 
     it('enforces student privacy on attendance records', async () => {
-      const own = await apiRequest('/api/attendance/my', { token: harshToken });
+      const own = await apiRequest('/api/attendance/my', { token: srishtiToken });
       assert.equal(own.status, 200);
       assert.ok(own.data.data.summary.length >= 2);
 
       const snooping = await apiRequest(`/api/attendance/student/${aaravUser._id}`, {
-        token: harshToken,
+        token: srishtiToken,
       });
       assert.equal(snooping.status, 403);
 
-      const facultyView = await apiRequest(`/api/attendance/student/${harshUser._id}`, {
+      const facultyView = await apiRequest(`/api/attendance/student/${srishtiUser._id}`, {
         token: faculty1Token,
       });
       assert.equal(facultyView.status, 200);
-      assert.equal(facultyView.data.data.student.rollNumber, '2501730330');
+      assert.equal(facultyView.data.data.student.rollNumber, '2501730380');
     });
   });
 
@@ -400,7 +400,7 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       assert.equal(lowAttendance.status, 200);
       const defaulterRolls = lowAttendance.data.data.map((d) => d.rollNumber);
       assert.ok(defaulterRolls.includes('2501730331'), 'Aarav Verma should be flagged below 75%');
-      assert.ok(!defaulterRolls.includes('2501730330'), 'Harshwardhan should not be flagged');
+      assert.ok(!defaulterRolls.includes('2501730380'), 'Srishti should not be flagged');
 
       const enrollmentStats = await apiRequest('/api/reports/enrollment-stats', {
         token: adminToken,
@@ -443,8 +443,8 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
     });
 
     it('delivers real-time course announcements and low-attendance alerts via EventEmitter -> Socket.IO', async () => {
-      const harshSocket = ioClient(baseUrl, {
-        auth: { token: harshToken },
+      const srishtiSocket = ioClient(baseUrl, {
+        auth: { token: srishtiToken },
         transports: ['websocket'],
         reconnection: false,
       });
@@ -455,13 +455,13 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       });
 
       await Promise.all([
-        new Promise((resolve) => harshSocket.once('connection:ready', resolve)),
+        new Promise((resolve) => srishtiSocket.once('connection:ready', resolve)),
         new Promise((resolve) => aaravSocket.once('connection:ready', resolve)),
       ]);
 
       // Listen for live announcement on Harshwardhan's socket
       const announcementPromise = new Promise((resolve) => {
-        harshSocket.once('announcement:new', resolve);
+        srishtiSocket.once('announcement:new', resolve);
       });
 
       // Faculty cannot post university-wide notice -> 403
@@ -530,7 +530,7 @@ describe('KRMU University Campus Management System — Integration & Real-Time T
       assert.ok(eventNames.includes('announcement:published'));
       assert.ok(eventNames.includes('attendance:marked'));
 
-      harshSocket.disconnect();
+      srishtiSocket.disconnect();
       aaravSocket.disconnect();
     });
   });
